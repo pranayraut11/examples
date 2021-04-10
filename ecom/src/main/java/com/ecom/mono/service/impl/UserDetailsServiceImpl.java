@@ -23,6 +23,9 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		Optional<User> user = userRepo.findByUsername(username);
+		if (user.isEmpty()) {
+			throw new UsernameNotFoundException("Username not found");
+		}
 		Collection<GrantedAuthority> authorities = new ArrayList<>();
 		authorities.add(new SimpleGrantedAuthority(user.get().getRole()));
 		return new UserDTO(user.get().getUsername(), user.get().getPassword(), authorities);

@@ -15,7 +15,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Autowired
 	private UserDetailsServiceImpl userDetailsServiceImpl;
-	
+
 	@Autowired
 	private PasswordEncoder encrptUtil;
 
@@ -26,7 +26,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-		http.authorizeRequests().antMatchers(HttpMethod.GET).authenticated();
+		http.authorizeRequests().antMatchers(HttpMethod.POST, "/user").permitAll().anyRequest().authenticated();
 		http.csrf().disable();
 		http.formLogin().disable();
 		http.httpBasic();
