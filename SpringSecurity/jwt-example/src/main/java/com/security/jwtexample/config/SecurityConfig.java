@@ -47,7 +47,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/user/**"). permitAll()
 //            our private endpoints
                         .anyRequest().authenticated()).addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
-
+                .authenticationProvider(authenticationProvider())
                 .build();
     }
 

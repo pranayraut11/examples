@@ -6,6 +6,9 @@ import com.security.jwtexample.entity.UserInfo;
 import com.security.jwtexample.repository.UserRepository;
 import com.security.jwtexample.utility.JWTUtility;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -22,10 +25,17 @@ public class UserServiceImpl implements UserService {
     private UserRepository userRepository;
     @Autowired
     private PasswordEncoder passwordEncoder;
+    @Autowired
+    private AuthenticationManager authenticationManager;
+
     @Override
     public LoginResponse login(String username, String password) throws AuthenticationException {
         var user = userRepository.findByUsername(username).orElseThrow();
-        if (passwordEncoder.matches(password, user.getPassword())) {
+        Authentication authenticationRequest =
+                UsernamePasswordAuthenticationToken.unauthenticated(username, password);
+        Authentication authenticationResponse =
+                this.authenticationManager.authenticate(authenticationRequest);
+        if(authenticationResponse.isAuthenticated()){
             return new LoginResponse(JWTUtility.generateToken(username));
         }
         throw new AuthenticationException("Invalid username/password");
