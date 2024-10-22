@@ -1,0 +1,65 @@
+version: '3'
+services:
+  sample-logging-app-1:
+    image: pranayraut11/sample-logging-tracing-with-alloy:latest
+    depends_on:
+      - loki
+    environment:
+      JAVA_TOOL_OPTIONS: "-javaagent:/app/libs/opentelemetry-javaagent-1.33.5.jar"
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://tempo:4317
+      OTEL_METRICS_EXPORTER: none
+      OTEL_SERVICE_NAME: logging
+      LOGGING_PATTERN_LEVEL: "%5p [$${spring.application.name},%X{trace_id},%X{span_id}]"
+
+    networks:
+      - loki
+  alloy:
+    image: grafana/alloy:latest
+    ports:
+      - 12345:12345
+      - 4318:4318
+    volumes:
+      - ./config.alloy:/etc/alloy/config.alloy
+      - ./logs:/tmp/app-logs/
+      - /var/run/docker.sock:/var/run/docker.sock # Required to access docker container logs
+    command: run --server.http.listen-addr=0.0.0.0:12345 --storage.path=/var/lib/alloy/data /etc/alloy/config.alloy
+    depends_on:
+      - loki
+    networks:
+      - loki
+  loki:
+    image: grafana/loki:main
+    ports:
+      - "3100:3100"
+    volumes:
+      - ./loki-config.yaml:/etc/loki/local-config.yaml
+    command: -config.file=/etc/loki/local-config.yaml
+    networks:
+      - loki
+  tempo:
+    image: grafana/tempo:latest
+    command: -config.file=/etc/tempo/local-config.yaml
+    volumes:
+      - ./tempo-config.yaml:/etc/tempo/local-config.yaml
+    ports:
+      - "3110:3100"
+      - "4317:4317"
+    networks:
+      - loki
+  grafana:
+    image: grafana/grafana:latest
+    environment:
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_BASIC_ENABLED=false
+      - GF_FEATURE_TOGGLES_ENABLE=accessControlOnCall
+      - GF_INSTALL_PLUGINS=https://storage.googleapis.com/integration-artifacts/grafana-lokiexplore-app/grafana-lokiexplore-app-latest.zip;grafana-lokiexplore-app
+    ports:
+      - 3000:3000/tcp
+    volumes:
+      - ./grafana:/etc/grafana/provisioning
+    networks:
+      - loki
+
+networks:
+  loki:

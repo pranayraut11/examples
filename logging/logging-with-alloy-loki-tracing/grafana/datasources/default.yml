@@ -1,0 +1,34 @@
+apiVersion: 1
+deleteDatasources:
+  - name: Loki
+  - name: Tempo
+
+datasources:
+- name: Loki
+  type: loki
+  access: proxy
+  url: http://loki:3100
+  orgId: 1
+  basicAuth: false
+  isDefault: true
+  version: 1
+  editable: false
+  jsonData:
+    httpHeaderName1: "X-Scope-OrgID"
+    derivedFields:
+      - datasourceUid: tempo
+        matcherRegex: "\\[.+,(.+),.+\\]"
+        name: Trace ID
+        url: '$${__value.raw}'
+- name: Tempo
+  type: tempo
+  uid: tempo
+  access: proxy
+  orgId: 1
+  editable: true
+  url: http://tempo:3100
+  basicAuth: false
+  isDefault: false
+  version: 1
+  jsonData:
+    httpMethod: GET
