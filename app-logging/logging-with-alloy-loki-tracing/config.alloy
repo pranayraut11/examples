@@ -3,7 +3,7 @@
     refresh_interval = "5s"
   }
 
-    discovery.relabel "flog_scrape" {
+  discovery.relabel "flog_scrape" {
     targets = []
 
     rule {
@@ -13,7 +13,7 @@
     }
   }
 
-    loki.source.docker "flog_scrape" {
+  loki.source.docker "flog_scrape" {
     host             = "unix:///var/run/docker.sock"
     targets          = discovery.docker.flog_scrape.targets
     forward_to       = [loki.write.default.receiver]
@@ -21,7 +21,7 @@
     refresh_interval = "5s"
   }
 
-    loki.write "default" {
+  loki.write "default" {
     endpoint {
     url       = "http://loki:3100/loki/api/v1/push"
     tenant_id = "tenant1"
