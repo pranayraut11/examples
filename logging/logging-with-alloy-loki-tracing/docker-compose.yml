@@ -10,7 +10,6 @@ services:
       OTEL_METRICS_EXPORTER: none
       OTEL_SERVICE_NAME: logging
       LOGGING_PATTERN_LEVEL: "%5p [$${spring.application.name},%X{trace_id},%X{span_id}]"
-
     networks:
       - loki
   alloy:
