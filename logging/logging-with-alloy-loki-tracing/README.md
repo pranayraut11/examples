@@ -18,15 +18,19 @@ docker-compose up
 ```
 3. Access the Grafana dashboard at http://localhost:3000
 4. Go to explore and query the logs
+   
 <img width="1402" alt="Screenshot 2024-10-26 at 6 51 06 PM" src="https://github.com/user-attachments/assets/8d8dda7e-8e7c-4e0a-9e38-c5e2eba796d9">
 
-Select Explore from the left sidebar and select the Loki data source. You can now query logs using the Loki query language.
+- Select Explore from the left sidebar and select the Loki data source. You can now query logs using the Loki query language.
 
 <img width="1481" alt="image" src="https://github.com/user-attachments/assets/3cbe496a-5a6a-45c9-9be8-d2fcf549cd5e">
-Select Table and select and add Trace Id from Fields to Selected Fields
+
+- Select Table and select and add Trace Id from Fields to Selected Fields
 
 <img width="1481" alt="image" src="https://github.com/user-attachments/assets/24563977-74fc-43f0-aab5-2db6f4e8c89c">
-Goto log tab and select any log . Now you can see tempo option to redirect from logs(Loki) to Trace(Tempo)
+
+- Goto log tab and select any log . Now you can see tempo option to redirect from logs(Loki) to Trace(Tempo)
+
 ### This project consists of the following components:
 - **Alloy**: A log ingestion service that collects logs from various sources and sends them to Loki.
 - **Loki**: A log storage service that stores logs in a time-series database.
