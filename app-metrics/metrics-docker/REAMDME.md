@@ -26,3 +26,8 @@ We can create metrics using the following endpoints:
 - All the metrics will be displayed for the `home` endpoint
 
   <img width="1481" alt="image" src="https://github.com/user-attachments/assets/82eb8db8-75af-4c47-bcd4-c59d23bd99e0">
+
+### We can demonstrate the alerting feature of Grafana by creating an alert on the `home` endpoint
+- Create an alert on the `home` endpoint
+- Set the condition as `when the query returns a value above 4 for 1 minute`
+
