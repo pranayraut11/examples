@@ -66,7 +66,7 @@ This should meet our alert condtion and triggers rule.
 
 <img width="1481" alt="image" src="https://github.com/user-attachments/assets/d3671f2c-459f-45b0-aebb-7a63d4c8372d">
 
-We can see Alering , Normal , Pending status.
+We can see Alerting , Normal , Pending status.
 - Alerting : Alert condition met and actually sending notification
 - Normal : Checking condition after specified interval of time but did not met alert condtion.
 - Pending : Alert condition met but waiting to trigger notification.(This is configurable - we can set waiting time)
