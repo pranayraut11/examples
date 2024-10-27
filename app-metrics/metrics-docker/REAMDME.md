@@ -13,6 +13,13 @@
 ### How to run
 - Clone the repository
 - Run the following command to start the application
+> **_NOTE:_** If you change anything in code you will need to build the application using the following command 
+Before building docker image you will need to change docker username in pom.xml file
+```
+mvn clean install jib:dockerBuild
+```
+- Update same username in docker-compose.yml file for web service
+
 ```
 docker-compose up
 ```
@@ -71,5 +78,112 @@ We can see Alerting , Normal , Pending status.
 - Normal : Checking condition after specified interval of time but did not met alert condtion.
 - Pending : Alert condition met but waiting to trigger notification.(This is configurable - we can set waiting time)
 
+### Spring boot application configuration
+- The application is a simple Spring Boot application that exposes a few REST endpoints to demonstrate the metrics collection.
+- The application uses Micrometer to expose the metrics to Prometheus.
+- The application uses the `micrometer-registry-prometheus` dependency to expose the metrics to Prometheus.
 
+### Dependencies used
+- Actuator: To expose the metrics
+```yaml
+<dependency>
+  <groupId>org.springframework.boot</groupId>
+  <artifactId>spring-boot-starter-actuator</artifactId>
+</dependency>
+```
+- Micrometer: To expose the metrics to Prometheus
+```yaml
+<dependency>
+  <groupId>io.micrometer</groupId>
+  <artifactId>micrometer-registry-prometheus</artifactId>
+  <scope>runtime</scope>
+</dependency>
+```
+- Spring boot AOP - To create custom metrics
+```yaml
+<dependency>
+  <groupId>org.springframework.boot</groupId>
+  <artifactId>spring-boot-starter-aop</artifactId>
+</dependency>
+```
+### This spring boot application exposes the observe metrics
+- Annotation '@Observed' is used to create custom metrics
+- To enable the Observe annotation, we need to create a bean of `ObserveMetricsAspect` in the application
+```java
+@Bean
+ObservedAspect observed(ObservationRegistry registry) {
+    return new ObservedAspect(registry);
+}
+```
 
+### Prometheus configuration
+- Prometheus is a monitoring tool that collects metrics from the application.
+
+- The Prometheus configuration is defined in the `prometheus.yml` file.
+```yaml
+global:
+  scrape_interval:     5s # Set the scrape interval to every 5 seconds.
+  evaluation_interval: 5s # Evaluate rules every 5 seconds.
+
+scrape_configs:
+  - job_name: 'sample-metrcis-app'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: [ 'sample-metrcis-app:8080' ] # docker container name and port
+```
+### Grafana datasource 
+- Add Prometheus as a data source in Grafana
+
+```yaml
+apiVersion: 1
+datasources:
+  - name: Prometheus
+    type: prometheus
+    access: proxy
+    url: http://prometheus:9090
+    isDefault: true
+```
+
+### Docker compose
+Sample spring boot app
+```yaml
+  sample-metrcis-app:
+    container_name: sample-metrcis-app
+    image: pranayraut11/sample-metrics-app:latest
+    depends_on:
+        - prometheus
+    ports:
+      - "8080:8080"
+    networks:
+        - prometheus
+```
+
+Prometheus
+```yaml
+prometheus:
+  image: prom/prometheus:latest
+  ports:
+    - "9090:9090"
+  volumes:
+    - ./prometheus.yml:/etc/prometheus/prometheus.yml
+  networks:
+    - prometheus
+```
+
+Grafana
+```yaml
+  grafana:
+    image: grafana/grafana:latest
+    environment:
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_BASIC_ENABLED=false
+      - GF_FEATURE_TOGGLES_ENABLE=accessControlOnCall
+      - GF_INSTALL_PLUGINS=https://storage.googleapis.com/integration-artifacts/grafana-lokiexplore-app/grafana-lokiexplore-app-latest.zip;grafana-lokiexplore-app
+    ports:
+      - 3000:3000/tcp
+    volumes:
+      - ./grafana:/etc/grafana/provisioning
+    networks:
+      - prometheus
+```

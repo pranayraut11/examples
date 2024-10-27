@@ -17,10 +17,6 @@ public class AppMetricsApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(AppMetricsApplication.class, args);
 	}
-	@Bean
-	CountedAspect countedAspect(MeterRegistry registry) {
-		return new CountedAspect(registry);
-	}
 
 	@Bean
 	ObservedAspect observed(ObservationRegistry registry) {
