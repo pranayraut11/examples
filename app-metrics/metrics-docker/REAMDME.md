@@ -24,3 +24,5 @@ We can create metrics using the following endpoints:
 - grafana: http://localhost:3000
 - goto Metrics -> Select Prometheus as the data source -> Search `home` metric 
 - All the metrics will be displayed for the `home` endpoint
+
+  <img width="1481" alt="image" src="https://github.com/user-attachments/assets/82eb8db8-75af-4c47-bcd4-c59d23bd99e0">
