@@ -4,6 +4,8 @@ services:
     image: pranayraut11/sample-metrics-app:latest
     depends_on:
         - prometheus
+    ports:
+      - "8080:8080"
     networks:
         - prometheus
   prometheus:
