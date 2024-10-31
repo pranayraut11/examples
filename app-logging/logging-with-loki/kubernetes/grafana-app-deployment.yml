@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: grafana-app-deployment
+  labels:
+    name: grafana
+    app: logging-app
+
+spec:
+  selector:
+    matchLabels:
+      app: logging-app
+      name: grafana
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: logging-app
+        name: grafana
+    spec:
+      containers:
+        - name: grafana
+          image: grafana/grafana:latest
+          ports:
+            - containerPort: 3000
+          volumeMounts:
+            - name: grafana-provisioning
+              mountPath: /etc/grafana/provisioning/datasources #This is the container path where the config file will be mounted
+          env:
+            - name: GF_PATHS_PROVISIONING
+              value: /etc/grafana/provisioning
+            - name: GF_AUTH_ANONYMOUS_ENABLED
+              value: "true"
+            - name: GF_AUTH_ANONYMOUS_ORG_ROLE
+              value: Admin
+
+      volumes:
+        - name: grafana-provisioning
+          configMap:
+            name: grafana-datasource-config-map
+            items:
+                - key: default.yml
+                  path: default.yml

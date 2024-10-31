@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
     <springProperty name="name" source="spring.application.name"/>
+    <springProperty name="lokipath" source="loki.url"/>
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
             <pattern>
@@ -12,7 +13,7 @@
     <appender name="LOKI" class="com.github.loki4j.logback.Loki4jAppender">
         <!-- (1) -->
         <http>
-            <url>http://loki:3100/loki/api/v1/push</url>
+            <url>${lokipath}/loki/api/v1/push</url>
         </http>
         <format>
             <!-- (2) -->

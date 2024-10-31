@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web-app-deployment
+  labels:
+    app: logging-app
+
+spec:
+  selector:
+    matchLabels:
+      app: logging-app
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: logging-app
+    spec:
+      containers:
+        - name: web-app
+          image: pranayraut11/sample-logging-app-1:latest
+          ports:
+            - containerPort: 8080
+          env:
+            - name: LOKI_URL
+              value: "http://loki:3100"

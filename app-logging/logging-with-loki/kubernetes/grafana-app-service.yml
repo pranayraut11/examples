@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: grafana-app
+  labels:
+    name: grafana
+    app: logging-app
+
+spec:
+  selector:
+    app: logging-app #should be match with deployments metadata.labels.app: logging-app
+    name: grafana #should be match with deployments metadata.labels.name: grafana
+  ports:
+    - protocol: TCP
+      port: 3000 #This is the container port
+      targetPort: 3000 #This is the port of service running inside the container
+      nodePort: 30002 #This is the port where the service will be exposed
+  type: NodePort

@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: loki-app-deployment
+  labels:
+    name: loki
+    app: logging-app
+
+spec:
+  selector:
+    matchLabels:
+      name: loki
+      app: logging-app
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        name: loki
+        app: logging-app
+    spec:
+      containers:
+        - name: loki
+          image: grafana/loki:2.8.2
+          ports:
+            - containerPort: 3100
