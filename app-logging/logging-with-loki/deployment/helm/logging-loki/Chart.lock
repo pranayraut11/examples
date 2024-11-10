@@ -1,0 +1,12 @@
+dependencies:
+- name: web-app
+  repository: file://charts/web-app
+  version: 0.1.0
+- name: loki
+  repository: file://charts/loki
+  version: 0.1.0
+- name: grafana
+  repository: file://charts/grafana
+  version: 0.1.0
+digest: sha256:dd644bb542c09095d8ec9e6cb22520fa98e523490fda01f2813c0d28ad34cd10
+generated: "2024-11-02T17:43:33.81984+05:30"

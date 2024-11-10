@@ -1,0 +1,19 @@
+web-app:
+  enabled: true
+  service:
+    envVars:
+      - name: LOKI_URL
+        value: "http://loki:3100"
+
+loki:
+  enabled: true
+grafana:
+  enabled: true
+  service:
+    envVars:
+      - name: GF_PATHS_PROVISIONING
+        value: /etc/grafana/provisioning
+      - name: GF_AUTH_ANONYMOUS_ENABLED
+        value: "true"
+      - name: GF_AUTH_ANONYMOUS_ORG_ROLE
+        value: Admin

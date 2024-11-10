@@ -1,0 +1,10 @@
+deploymentName: loki-deployment
+deploymentLabel: loki
+replicaCount: 1
+image:
+  repository: grafana/loki
+  tag: 2.8.2
+service:
+  type: ClusterIP
+  port: 3100
+  targetPort: 3100
