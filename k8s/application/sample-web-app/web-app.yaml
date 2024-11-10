@@ -1,0 +1,62 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: web-app
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: web-app
+  name: deployment-web-app
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: web-app
+  replicas: 5
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: web-app
+    spec:
+      containers:
+        - image: docker.io/pranayraut11/sample-web-app:latest
+          imagePullPolicy: Always
+          name: web-app
+          ports:
+            - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: web-app
+  name: web-app
+spec:
+  ports:
+    - port: 8080
+      targetPort: 8080
+      protocol: TCP
+  type: NodePort
+  selector:
+    app.kubernetes.io/name: web-app
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  namespace: web-app
+  name: web-app
+  annotations:
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
+spec:
+  ingressClassName: alb
+  rules:
+    - http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: web-app
+                port:
+                  number: 8080
